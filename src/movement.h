@@ -6,6 +6,7 @@
 #include "display.h"
 #include "TMCStepper.h"
 #include "Preferences.h"
+#include "board.h"
 
 // Motor driver parameters.
 constexpr int printSpeedSteps = 650;
@@ -22,10 +23,10 @@ constexpr double midPulleyToWall = 41.0;    // (Height) distance from mid of pul
 constexpr float homedStepOffsetMM = 40.0;   // Length of fully retracted belt hitting stop screw.
                                             // Measured from outer edge of screw to the point
                                             // of tangency between belt and pulley. [mm]
-constexpr double mass_bot = 0.55;   // Mass of the mural bot [kg].
+constexpr double mass_bot = BOARD.botMassKg;   // Mass of the mural bot [kg]. Depends on the build (board profile).
 constexpr double g_constant = 9.81; // Earth's gravitational acceleration constant [m/s^2]. Please adjust when running Mural on other planets!
 constexpr double pulleyAxisDistance = 89.50;  // [mm] Distance between the two pulley axes.
-constexpr double axesToCenterOfMass = 10.0;   // [mm] Distance from line connecting pulley axes to center of mass of bot (projected onto wall plane).
+constexpr double axesToCenterOfMass = BOARD.comBelowAxesMm;   // [mm] Distance from line connecting pulley axes to center of mass of bot (projected onto wall plane). Board profile.
                                               
 // The tangent-point geometry (d_t, d_p, d_m) depends on the pulley diameter, so it's derived from it
 // at runtime in Movement::updatePulleyGeometry() - see KinematicModel.md.
@@ -40,17 +41,7 @@ constexpr double safeXFraction = 0.2;           // Left and right margin: from d
 // Variables used for debugging:
 // constexpr int sleepDurationAfterMove_ms = 0;    // Delay after linear movement [ms], e.g. 50.
 
-constexpr int LEFT_STEP_PIN = 14;
-constexpr int LEFT_DIR_PIN = 12;
-constexpr int LEFT_UART_ADDR = 0;
-constexpr int LEFT_DIAG_PIN = 36;
-
-constexpr int RIGHT_STEP_PIN = 25;
-constexpr int RIGHT_DIR_PIN = 26;
-constexpr int RIGHT_UART_ADDR = 1;
-constexpr int RIGHT_DIAG_PIN = 39;
-
-constexpr int MOTOR_ENABLE_PIN = 13;
+// Stepper/driver pins live in the board profile (board.h).
 
 class Movement{
 private:

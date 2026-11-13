@@ -1,6 +1,7 @@
 #ifndef Pen_h
 #define Pen_h
 #include <ESP32Servo.h>
+#include "board.h"
 const int RETRACT_DISTANCE = 20;
 class Pen {
     private:

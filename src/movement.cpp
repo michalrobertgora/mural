@@ -11,39 +11,48 @@ Movement::Movement(Display *display)
 {
     this->display = display;
 
-    tmcSerial = new HardwareSerial(1);
-    tmcSerial->begin(115200, SERIAL_8N1, 16, 17);
-    delay(100); // Allow TMC2209 drivers to power-on and UART to settle
+    tmcSerial = nullptr;
+    leftDriver = nullptr;
+    rightDriver = nullptr;
+    if constexpr (BOARD.driverConfig == DriverConfig::Uart) {
+        tmcSerial = new HardwareSerial(1);
+        tmcSerial->begin(115200, SERIAL_8N1, BOARD.tmcUartRx, BOARD.tmcUartTx);
+        delay(100); // Allow TMC2209 drivers to power-on and UART to settle
 
-    leftDriver = new TMC2209Stepper(tmcSerial, 0.11, LEFT_UART_ADDR);
-    leftDriver->begin();
-    leftDriver->toff(5);
-    leftDriver->rms_current(707);
-    leftDriver->microsteps(8);
-    leftDriver->pwm_autoscale(true);
-    Serial.printf("Left driver: conn=%d microsteps=%d rms: %d \n",
-                  leftDriver->test_connection(), leftDriver->microsteps(), leftDriver->rms_current());
+        leftDriver = new TMC2209Stepper(tmcSerial, 0.11, BOARD.leftUartAddr);
+        leftDriver->begin();
+        leftDriver->toff(5);
+        leftDriver->rms_current(707);
+        leftDriver->microsteps(8);
+        leftDriver->pwm_autoscale(true);
+        Serial.printf("Left driver: conn=%d microsteps=%d rms: %d \n",
+                      leftDriver->test_connection(), leftDriver->microsteps(), leftDriver->rms_current());
 
-    rightDriver = new TMC2209Stepper(tmcSerial, 0.11, RIGHT_UART_ADDR);
-    rightDriver->begin();
-    rightDriver->toff(5);
-    rightDriver->rms_current(707);
-    rightDriver->microsteps(8);
-    rightDriver->pwm_autoscale(true);
-    Serial.printf("Right driver: conn=%d microsteps=%d rms: %d \n",
-                  rightDriver->test_connection(), rightDriver->microsteps(), rightDriver->rms_current());
+        rightDriver = new TMC2209Stepper(tmcSerial, 0.11, BOARD.rightUartAddr);
+        rightDriver->begin();
+        rightDriver->toff(5);
+        rightDriver->rms_current(707);
+        rightDriver->microsteps(8);
+        rightDriver->pwm_autoscale(true);
+        Serial.printf("Right driver: conn=%d microsteps=%d rms: %d \n",
+                      rightDriver->test_connection(), rightDriver->microsteps(), rightDriver->rms_current());
+    } else {
+        // Standalone drivers: microsteps (1/8) set by DIP switches, current by the Vref pot.
+        Serial.println("Drivers: standalone (microsteps via DIP, current via Vref)");
+    }
 
     // enable all motors
-    pinMode(MOTOR_ENABLE_PIN, OUTPUT);
-    digitalWrite(MOTOR_ENABLE_PIN, LOW);
+    pinMode(BOARD.motorEnable, OUTPUT);
+    digitalWrite(BOARD.motorEnable, BOARD.motorEnableActiveLow ? LOW : HIGH);
 
-    leftMotor = new AccelStepper(AccelStepper::DRIVER, LEFT_STEP_PIN, LEFT_DIR_PIN);
+    leftMotor = new AccelStepper(AccelStepper::DRIVER, BOARD.leftStep, BOARD.leftDir);
     leftMotor->setMaxSpeed(moveSpeedSteps);
-    leftMotor->setPinsInverted(true);
+    leftMotor->setPinsInverted(BOARD.leftDirInverted);
     leftMotor->disableOutputs();
 
-    rightMotor = new AccelStepper(AccelStepper::DRIVER, RIGHT_STEP_PIN, RIGHT_DIR_PIN);
+    rightMotor = new AccelStepper(AccelStepper::DRIVER, BOARD.rightStep, BOARD.rightDir);
     rightMotor->setMaxSpeed(moveSpeedSteps);
+    rightMotor->setPinsInverted(BOARD.rightDirInverted);
     rightMotor->disableOutputs();
 
     topDistance = -1;

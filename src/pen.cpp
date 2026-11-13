@@ -43,16 +43,42 @@ void doSlowMove(Pen* pen, int startDegree, int targetDegree, int speedDegPerSec)
 }
 
 
+namespace {
+// Used only when the board's servo output stage inverts the signal (BOARD.servoInverted):
+// drive LEDC directly and emit the complementary duty so the servo sees normal pulses.
+constexpr int INVERTED_SERVO_LEDC_CHANNEL = 4;
+constexpr int SERVO_LEDC_BITS = 14;
+constexpr int SERVO_PERIOD_US = 20000;          // 50 Hz
+constexpr int SERVO_MIN_US = 544, SERVO_MAX_US = 2400;  // ESP32Servo's default angle mapping
+
+void writeInvertedServo(int angle) {
+    angle = constrain(angle, 0, 180);
+    int us = SERVO_MIN_US + (SERVO_MAX_US - SERVO_MIN_US) * angle / 180;
+    uint32_t maxDuty = (1u << SERVO_LEDC_BITS) - 1;
+    uint32_t duty = (uint32_t)((uint64_t)us * maxDuty / SERVO_PERIOD_US);
+    ledcWrite(INVERTED_SERVO_LEDC_CHANNEL, maxDuty - duty);
+}
+}  // namespace
+
 Pen::Pen()
 {
-    servo = new Servo();
-    servo->attach(21);
-    servo->write(70);
-    currentPosition = 70;
+    if constexpr (BOARD.servoInverted) {
+        servo = nullptr;
+        ledcSetup(INVERTED_SERVO_LEDC_CHANNEL, 1000000 / SERVO_PERIOD_US, SERVO_LEDC_BITS);
+        ledcAttachPin(BOARD.servo, INVERTED_SERVO_LEDC_CHANNEL);
+    } else {
+        servo = new Servo();
+        servo->attach(BOARD.servo);
+    }
+    setRawValue(70);
 }
 
 void Pen::setRawValue(int rawValue) {
-    this->servo->write(rawValue);
+    if constexpr (BOARD.servoInverted) {
+        writeInvertedServo(rawValue);
+    } else {
+        this->servo->write(rawValue);
+    }
     currentPosition = rawValue;
 }
 

@@ -1,5 +1,5 @@
 #include "svgselectphase.h"
-#include "SD.h"
+#include "../storage.h"
 
 SvgSelectPhase::SvgSelectPhase(PhaseManager* manager) {
     this->manager = manager;
@@ -17,29 +17,29 @@ void SvgSelectPhase::handleUpload(AsyncWebServerRequest *request, String filenam
 
         if (offset == 0)
         {
-            if (SD.exists("/commands")) {
-                SD.remove("/commands");
+            if (storage::fs().exists("/commands")) {
+                storage::fs().remove("/commands");
             }
 
             size_t totalBytes = request->hasParam("totalBytes")
                 ? strtoul(request->getParam("totalBytes")->value().c_str(), nullptr, 10)
                 : request->contentLength();
 
-            Serial.printf("%d bytes total, %d bytes free\n",  SD.totalBytes(), SD.totalBytes() - SD.usedBytes());
+            Serial.printf("%d bytes total, %d bytes free\n",  storage::totalBytes(), storage::totalBytes() - storage::usedBytes());
             Serial.printf("Upload size: %d bytes\n", totalBytes);
 
-            if (SD.totalBytes() -  SD.usedBytes() < totalBytes) {
+            if (storage::totalBytes() -  storage::usedBytes() < totalBytes) {
                 Serial.println("Not enough space on SD card");
                 request->send(400, "text/plain", "Not enough space for upload");
                 return;
             }
 
-            request->_tempFile = SD.open("/commands", "w");
+            request->_tempFile = storage::fs().open("/commands", "w");
             Serial.println("Upload started");
         }
         else
         {
-            request->_tempFile = SD.open("/commands", "r+");
+            request->_tempFile = storage::fs().open("/commands", "r+");
             if (!request->_tempFile || !request->_tempFile.seek(offset)) {
                 Serial.println("Failed to seek to chunk offset, ask client to restart upload");
                 request->send(409, "text/plain", "Upload out of order, restart upload");

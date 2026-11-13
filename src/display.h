@@ -4,7 +4,7 @@
 
 class Display {
     private:
-    Adafruit_SSD1306 *display;
+    Adafruit_SSD1306 *display;  // nullptr when headless (no OLED found): status goes to Serial
     String ip;
     void drawLines(String lines[], int n);
     public:
