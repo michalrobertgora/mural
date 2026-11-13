@@ -8,9 +8,13 @@ The stepper body length is a parameter, because the motors are bigger than the p
 
 **Blocked by:** None — can start immediately
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] The script regenerates the parts from the upstream STEP, with key dimensions as parameters
-- [ ] The interference check finds zero intersection volume and clearance above the threshold
-- [ ] Preview renders are produced
-- [ ] STL/3MF files are exported
+- [x] The script regenerates the parts from the upstream STEP, with key dimensions as parameters
+- [x] The interference check finds zero intersection volume and clearance above the threshold
+- [x] Preview renders are produced
+- [x] STL/3MF files are exported
+
+## Comments
+
+Done in a0bdd8e (cad/enclosure.py, outputs in cad/out). Design: stretch bottom+cover 30 mm at z=-25 (all upstream features preserved), board 100 mm side along the wall, motor edge left / DC-USB edge right, bosses identical to upstream (7 mm OD, 4.2 mm insert hole). Longer steppers protrude out of the front face and can't collide with the enclosure. Check: PASS, no interference, >= 0.5 mm clearance vs board/driver/connector/cable envelope and all upstream components. Component positions are from the Makerbase drawing (+-1 mm) - re-check with calipers in ticket 10.

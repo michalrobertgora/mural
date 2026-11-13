@@ -4,8 +4,12 @@
 
 **Blocked by:** 01
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] The storage interface exists, and nothing outside the SPI implementation uses the SPI SD global directly
-- [ ] The SPI implementation keeps upstream's card-missing, format-countdown and mount behaviour
-- [ ] The upstream target builds green
+- [x] The storage interface exists, and nothing outside the SPI implementation uses the SPI SD global directly
+- [x] The SPI implementation keeps upstream's card-missing, format-countdown and mount behaviour
+- [x] The upstream target builds green
+
+## Comments
+
+Done in e578cac (storage.h/.cpp; sdcard.* removed). SPI path is upstream's logic verbatim.

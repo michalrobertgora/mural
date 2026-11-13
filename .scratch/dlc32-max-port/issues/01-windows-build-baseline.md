@@ -4,9 +4,13 @@
 
 **Blocked by:** None — can start immediately
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] PlatformIO is available on the human's Windows machine, installed with `uv tool`
-- [ ] The pre-build script uses only portable Python file operations, with no shell-specific commands
-- [ ] The upstream target's firmware builds green on Windows
-- [ ] The upstream target's filesystem image builds green on Windows
+- [x] PlatformIO is available on the human's Windows machine, installed with `uv tool`
+- [x] The pre-build script uses only portable Python file operations, with no shell-specific commands
+- [x] The upstream target's firmware builds green on Windows
+- [x] The upstream target's filesystem image builds green on Windows
+
+## Comments
+
+Done in 718229c. Two Windows-only failures fixed: (1) worker dep `canvas` needs node-gyp+cairo -> worker installs with `--ignore-scripts` (canvas is only used by the dev-only tester.ts); (2) PlatformIO's output-echo thread crashed on vite's Unicode check mark under cp1252 and hung the build -> build.py re-prints npm output as ASCII. Upstream target: RAM 14.9%, Flash 94.1%.

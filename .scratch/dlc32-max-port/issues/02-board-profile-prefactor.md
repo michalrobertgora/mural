@@ -4,9 +4,13 @@
 
 **Blocked by:** 01
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] One board profile per target, selected by a build flag; the upstream target is the default
-- [ ] No GPIO literals remain outside the board profiles
-- [ ] The upstream target still builds, with pin values identical to before
-- [ ] A host-side (PlatformIO native) test asserts that each profile has no duplicate pins and uses no flash or other forbidden pins
+- [x] One board profile per target, selected by a build flag; the upstream target is the default
+- [x] No GPIO literals remain outside the board profiles
+- [x] The upstream target still builds, with pin values identical to before
+- [x] A host-side (PlatformIO native) test asserts that each profile has no duplicate pins and uses no flash or other forbidden pins
+
+## Comments
+
+Done in e578cac. Deviation: no PlatformIO native test env (no host C++ compiler on the dev machine); the profile consistency checks are `static_assert`s in boardprofile.h instead, so they run in every firmware build (local + CI) - a higher seam than a native test. Profile also carries comBelowAxesMm (centre of mass) besides botMassKg.

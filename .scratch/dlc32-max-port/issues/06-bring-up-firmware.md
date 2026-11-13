@@ -12,9 +12,13 @@ It prints a numbered PASS/OBSERVE report over serial, so the human only has to w
 
 **Blocked by:** 04
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] The bring-up environment builds green
-- [ ] It shares the board profile, so it tests the exact pins the real firmware uses
-- [ ] The serial report lists each step with what the human should observe
-- [ ] It includes an I2C scan across candidate header pin pairs
+- [x] The bring-up environment builds green
+- [x] It shares the board profile, so it tests the exact pins the real firmware uses
+- [x] The serial report lists each step with what the human should observe
+- [x] It includes an I2C scan across candidate header pin pairs
+
+## Comments
+
+Done in c588ec6 (src/bringup/bringup.cpp, env mks_dlc32_max_bringup, 115200 baud). Steps: profile dump, buzzer, enable polarity, left/right motor 1 rev each way (detects wrong DIP microstepping), servo normal vs inverted signal, SD 4-bit then 1-bit mount + write/read, I2C scan on profile pins (and swapped). Menu to re-run single steps.

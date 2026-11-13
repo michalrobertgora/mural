@@ -10,10 +10,14 @@
 
 **Blocked by:** 02
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] A new build environment compiles for the ESP32-S3 with an 8 MB partition table; the upstream environment is unchanged
-- [ ] A DLC32 MAX profile has the pins from the V1.0_002 pin sheet, with sources cited
-- [ ] TMC UART configuration is excluded on this target
-- [ ] A missing OLED does not block boot (headless fallback)
-- [ ] Both targets build green
+- [x] A new build environment compiles for the ESP32-S3 with an 8 MB partition table; the upstream environment is unchanged
+- [x] A DLC32 MAX profile has the pins from the V1.0_002 pin sheet, with sources cited
+- [x] TMC UART configuration is excluded on this target
+- [x] A missing OLED does not block boot (headless fallback)
+- [x] Both targets build green
+
+## Comments
+
+Done in c588ec6. Deviation: drivers in the **Y and Z sockets** (left = Y STEP7/DIR6, right = Z STEP5/DIR4), not X/Y - forced by the enclosure layout (ticket 09): the X socket sits under the OLED's wiring, A uses GPIO19/20 (ESP32-S3 USB). Builds: RAM 14.9%, Flash 35.9% of 3 MB app partition; LittleFS image builds.
