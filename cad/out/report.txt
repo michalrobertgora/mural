@@ -1,0 +1,9 @@
+MKS DLC32 MAX enclosure report
+stretch: +30.0 mm at z=-25.0
+bottom bbox size: 170.6 x 36.9 x 176.3 mm, volume 110.2 cm3 (upstream 102.4)
+cover  bbox size: 103.9 x 33.4 x 142.3 mm, volume 67.5 cm3 (upstream 55.4)
+board holes (x,z): [(14.0, -63.5), (76.0, -63.5), (14.0, 28.5), (76.0, 28.5)]
+drivers in sockets: Y, Z
+clearance required: 0.5 mm
+
+PASS: no interference, all clearances >= 0.5 mm
